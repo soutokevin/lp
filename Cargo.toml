@@ -1,6 +1,9 @@
 [package]
 name = "lp"
 version = "0.1.0"
-authors = ["Kevin Souto <soutokevin@gmail.com>"]
+authors = ["Kevin Souto <soutokevin@gmail.com>",
+           "Khalil Carsten <khalilcarsten@gmail.com>"]
 
 [dependencies]
+kamadak-exif = "0.3"
+rexiv2 = "0.6.0"
