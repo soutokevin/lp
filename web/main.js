@@ -1,38 +1,28 @@
-const input = document.getElementById('file')
-const type = document.getElementById('type')
-const size = document.getElementById('size')
-const name = document.getElementById('name')
-const content = document.getElementById('content')
+import Vue from 'vue/dist/vue.esm'
 const rust = import('../bindgen/lp.js')
 
-if (input.files[0]) {
-  update(input.files[0]).catch(err => console.error(err))
-}
-
-input.addEventListener('change', ev => {
-  const file = ev.target.files[0]
-  update(file).catch(err => console.error(err))
-})
-
-async function update(file) {
-  name.innerText = file.name
-  type.innerText = file.type
-  size.innerText = file.size
-  content.innerText = (await rust).read_file(
-    new Uint8Array(await readFile(file))
-  )
-}
-
-function readContent(file) {
+function readFile(file) {
   return new Promise((resolve, reject) => {
     let reader = new FileReader()
-    reader.onload = resolve
+    reader.onload = ev => resolve(ev.target.result)
     reader.onerror = reject
     reader.readAsArrayBuffer(file)
   })
 }
 
-async function readFile(file) {
-  let content = await readContent(file)
-  return content.target.result
-}
+const vm = new Vue({
+  el: '#app',
+  data: { name: '', type: '', size: '', content: '' },
+  methods: {
+    change({ target: { files } }) {
+      this.name = files[0].name
+      this.type = files[0].type
+      this.size = files[0].size
+      this.updateContent(files[0])
+    },
+    async updateContent(file) {
+      let buffer = await readFile(file)
+      this.content = (await rust).read_file(new Uint8Array(buffer))
+    }
+  }
+})
