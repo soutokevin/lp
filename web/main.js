@@ -1,5 +1,3 @@
-'use strict'
-
 const input = document.getElementById('file')
 const type = document.getElementById('type')
 const size = document.getElementById('size')
@@ -35,3 +33,7 @@ async function readFile(file) {
   let content = await readContent(file)
   return content.target.result
 }
+
+const rust = import('../bindgen/lp.js')
+
+rust.then(m => m.greet('World'))
