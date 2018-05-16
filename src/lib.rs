@@ -25,9 +25,12 @@ pub fn read_file(vec: &[u8]) -> String {
             | b'-'
             | b'{'
             | b'}'
-            | b' ' => text.push(*el as char),
+            | b' ' => {
+                text.push(' ');
+                text.push(*el as char)
+            }
             b'\n' => text.push_str("\\n"),
-            _ => text.push('.'),
+            _ => text.push_str(" ."),
         }
     }
 
