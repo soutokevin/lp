@@ -3,6 +3,7 @@ const type = document.getElementById('type')
 const size = document.getElementById('size')
 const name = document.getElementById('name')
 const content = document.getElementById('content')
+const rust = import('../bindgen/lp.js')
 
 if (input.files[0]) {
   update(input.files[0]).catch(err => console.error(err))
@@ -17,7 +18,9 @@ async function update(file) {
   name.innerText = file.name
   type.innerText = file.type
   size.innerText = file.size
-  content.innerText = await readFile(file)
+  content.innerText = (await rust).read_file(
+    new Uint8Array(await readFile(file))
+  )
 }
 
 function readContent(file) {
@@ -25,7 +28,7 @@ function readContent(file) {
     let reader = new FileReader()
     reader.onload = resolve
     reader.onerror = reject
-    reader.readAsText(file)
+    reader.readAsArrayBuffer(file)
   })
 }
 
@@ -33,7 +36,3 @@ async function readFile(file) {
   let content = await readContent(file)
   return content.target.result
 }
-
-const rust = import('../bindgen/lp.js')
-
-rust.then(m => m.greet('World'))
