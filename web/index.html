@@ -6,37 +6,64 @@
   </head>
 
   <body>
+    <!-- Tiulo de entrada da pagina -->
     <h1>Trabalho de LP</h1>
 
+    <!-- Transforma e formata o mapa do Google em uma div -->
     <div id="googleMap" style="width:100%;height:400px;"></div>
 
+    <!-- Propriedades do mapa -->
     <script>
     function myMap() {
-    var mapProp= {
-        center:new google.maps.LatLng(51.508742,-0.120850),
+      var initcenter = new google.maps.LatLng(-15,-47);
+      var mapProp= {
+        center: initcenter,
         zoom:5,
-    };
-    var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+      };
+      var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+      var marker = new google.maps.Marker({position:null});
+      marker.setMap(map);
     }
     </script>
-
+    <!-- Source do mapa -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDq8GMI3ayIkdD1Kd6yNwm6pg4NfQa9yGE&callback=myMap"></script>
+
     <div id="app">
-      <input type="file" @change="change" />
+
+      <!-- Captura e envia duas entradas do usuário aqui será a interface com os metadados-->
+      <form>
+        <input type="text" name="latitude" id="1" value="latitude">
+        <input type="text" name="longitude" id="2" value="longitude">
+        <input type="submit">
+      </form>
+      
+      <!-- Arrumar isso, mas marcará o local no mapa encontrado nos metadados-->
+      <script>
+        var longitude = document.getElementsByName("longitute")[0].value;
+        var latitude = document.getElementsByName("longitude")[0].value;
+        var myCenter = new google.maps.LatLng(latitude,longitude);
+        var marker = new google.maps.Marker({position:myCenter})
+        marker.setMap(map)
+      </script>
       <h2>File Info</h2>
+
       <p>
         <strong>Name: </strong>
         <span>{{ name }}</span>
       </p>
+
       <p>
         <strong>Size: </strong>
         <span>{{ size }}</span>
       </p>
+
       <p>
         <strong>Type: </strong>
         <span>{{ type }}</span>
       </p>
+
       <pre>{{ content }}</pre>
     </div>
+    
   </body>
 </html>
