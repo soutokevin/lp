@@ -1,4 +1,5 @@
 import Vue from 'vue/dist/vue.esm'
+import Leaflet from 'leaflet'
 const rust = import('../bindgen/lp.js')
 
 function readFile(file) {
@@ -12,7 +13,12 @@ function readFile(file) {
 
 const vm = new Vue({
   el: '#app',
-  data: { name: '', type: '', size: '', content: '' },
+  data: {
+    name: '',
+    type: '',
+    size: '',
+    content: ''
+  },
   methods: {
     change({ target: { files } }) {
       this.name = files[0].name
@@ -25,4 +31,20 @@ const vm = new Vue({
       this.content = (await rust).read_metadata(new Uint8Array(buffer))
     }
   }
+})
+
+Vue.component('mapView', {
+  props: {
+    latitude: Number,
+    longitude: Number
+  },
+  data: function () {
+    return {
+      mymap: null
+    }
+  },
+  mounted () {
+    this.mymap = Leaflet.map('mapid').setView([51.505, -0.09], 13);
+  },
+  template: '<div id="mapid"></div>'
 })
