@@ -22,7 +22,7 @@ const vm = new Vue({
     },
     async updateContent(file) {
       let buffer = await readFile(file)
-      this.content = (await rust).read_file(new Uint8Array(buffer))
+      this.content = (await rust).read_metadata(new Uint8Array(buffer))
     }
   }
 })
