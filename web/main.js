@@ -11,6 +11,39 @@ function readFile(file) {
   })
 }
 
+var mapview = Vue.component('mapview', {
+  props: {
+    content: Float64Array
+  },
+  data: function () {
+    return {
+      mymap: null
+    }
+  },
+  watch: {
+    content: function(val){
+      console.log(val)
+      Leaflet.marker([val[0], val[1]]).addTo(this.mymap)
+      Leaflet.circle([val[0], val[1]], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5,
+        radius: 10
+      }).addTo(this.mymap);
+
+      this.mymap.setView([val[0], val[1]], 24)
+    }
+  },
+  mounted () {
+    this.mymap = Leaflet.map('mapid').setView([-14.2350, -51.9253], 5);
+    console.log(this.content)
+    Leaflet.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	    maxZoom: 19
+    }).addTo(this.mymap);
+  },
+  template: '<div id="mapid"></div>'
+})
+
 const vm = new Vue({
   el: '#app',
   data: {
@@ -18,6 +51,9 @@ const vm = new Vue({
     type: '',
     size: '',
     content: ''
+  },
+  components: {
+    'mapview': mapview
   },
   methods: {
     change({ target: { files } }) {
@@ -31,20 +67,4 @@ const vm = new Vue({
       this.content = (await rust).read_metadata(new Uint8Array(buffer))
     }
   }
-})
-
-Vue.component('mapView', {
-  props: {
-    latitude: Number,
-    longitude: Number
-  },
-  data: function () {
-    return {
-      mymap: null
-    }
-  },
-  mounted () {
-    this.mymap = Leaflet.map('mapid').setView([51.505, -0.09], 13);
-  },
-  template: '<div id="mapid"></div>'
 })

@@ -3,13 +3,21 @@
 <html>
   <head>
     <title>Trabalho de LP</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css">
+    <!-- <script src="bundle.js"></script> -->
+
+    <style>
+      #mapid {
+        width: auto;
+        height: 500px;
+      }
+    </style>
+
   </head>
 
   <body>
-    <style>
-    #mapid { height: 180px; }
-    </style>
-
     <h1>Trabalho de LP</h1>
     <div id="app">
       <input type="file" @change="change" />
@@ -27,7 +35,9 @@
         <span>{{ type }}</span>
       </p>
       <pre>{{ content }}</pre>
+      <div>
+        <mapview v-bind:content="content"></mapview>
+      <div>
     </div>
-    <mapView></mapView>
   </body>
 </html>
