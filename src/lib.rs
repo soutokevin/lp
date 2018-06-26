@@ -14,28 +14,22 @@ pub fn read_metadata(vec: &[u8]) -> Vec<f64> {
     }
 }
 
+fn get_cord(reader: &Reader, tag: Tag) -> Option<f64> {
+    match reader.get_field(tag, false)?.value {
+        Value::Rational(ref cord) => {
+            let degrees = cord[0].to_f64();
+            let min = cord[1].to_f64();
+            let sec = cord[2].to_f64();
+            Some(degrees + (min / 60.0) + (sec / 3600.0))
+        }
+        _ => None,
+    }
+}
+
 fn metadata(vec: &[u8]) -> Option<(f64, f64)> {
     let reader = Reader::new(&mut std::io::BufReader::new(vec)).unwrap();
-
-    let mut latitude = match reader.get_field(Tag::GPSLatitude, false)?.value {
-        Value::Rational(ref cord) => {
-            let degrees = cord[0].to_f64();
-            let min = cord[1].to_f64();
-            let sec = cord[2].to_f64();
-            degrees + (min / 60.0) + (sec / 3600.0)
-        }
-        _ => panic!(),
-    };
-
-    let mut longitude = match reader.get_field(Tag::GPSLongitude, false)?.value {
-        Value::Rational(ref cord) => {
-            let degrees = cord[0].to_f64();
-            let min = cord[1].to_f64();
-            let sec = cord[2].to_f64();
-            degrees + (min / 60.0) + (sec / 3600.0)
-        }
-        _ => panic!(),
-    };
+    let mut latitude = get_cord(&reader, Tag::GPSLatitude)?;
+    let mut longitude = get_cord(&reader, Tag::GPSLongitude)?;
 
     match reader.get_field(Tag::GPSLatitudeRef, false)?.value {
         Value::Ascii(ref chars) if chars[0][0] == b'S' => latitude *= -1.0,
