@@ -17,9 +17,10 @@ pub fn read_metadata(vec: &[u8]) -> Vec<f64> {
 fn get_cord(reader: &Reader, tag: Tag) -> Option<f64> {
     match reader.get_field(tag, false)?.value {
         Value::Rational(ref cord) => {
-            let degrees = cord[0].to_f64();
-            let min = cord[1].to_f64();
-            let sec = cord[2].to_f64();
+            let mut iter = cord.iter();
+            let degrees = iter.next()?.to_f64();
+            let min = iter.next()?.to_f64();
+            let sec = iter.next()?.to_f64();
             Some(degrees + (min / 60.0) + (sec / 3600.0))
         }
         _ => None,
