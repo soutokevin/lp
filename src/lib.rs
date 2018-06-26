@@ -10,11 +10,11 @@ use wasm_bindgen::prelude::*;
 pub fn read_metadata(vec: &[u8]) -> Vec<f64> {
     let reader = exif::Reader::new(&mut std::io::BufReader::new(vec)).unwrap();
 
-    let deegres_lati;
+    let degrees_lati;
     let min_lati;
     let sec_lati;
 
-    let deegres_long;
+    let degrees_long;
     let min_long;
     let sec_long;
 
@@ -24,7 +24,7 @@ pub fn read_metadata(vec: &[u8]) -> Vec<f64> {
         .value
     {
         Value::Rational(ref lati_cord) => {
-            deegres_lati = lati_cord[0].to_f64();
+            degrees_lati = lati_cord[0].to_f64();
             min_lati = lati_cord[1].to_f64();
             sec_lati = lati_cord[2].to_f64();
         }
@@ -37,15 +37,15 @@ pub fn read_metadata(vec: &[u8]) -> Vec<f64> {
         .value
     {
         Value::Rational(ref long_cord) => {
-            deegres_long = long_cord[0].to_f64();
+            degrees_long = long_cord[0].to_f64();
             min_long = long_cord[1].to_f64();
             sec_long = long_cord[2].to_f64();
         }
         _ => panic!(),
     }
 
-    let mut latitude = deegres_lati + (min_lati / 60.0) + (sec_lati / 3600.0);
-    let mut longitude = deegres_long + (min_long / 60.0) + (sec_long / 3600.0);
+    let mut latitude = degrees_lati + (min_lati / 60.0) + (sec_lati / 3600.0);
+    let mut longitude = degrees_long + (min_long / 60.0) + (sec_long / 3600.0);
 
     match reader
         .get_field(exif::Tag::GPSLatitudeRef, false)
