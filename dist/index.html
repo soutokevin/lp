@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <link class="jsbin" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>
+    <title>Trabalho de LP</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css">
+
+    <!-- <script src="bundle.js"></script> -->
+    <!--[if IE]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  <style>
+
+    h1 {
+      background-color:aqua;
+    }
+
+    body {
+      background-color: rgb(243, 241, 217);
+    }
+
+    #mapid {
+      width: auto;
+      height: 500px;
+    }
+
+
+  </style>
+  </head>
+
+  <body>
+      <script>
+          function readURL(input) {
+          if (input.files && input.files[0]) {
+              var reader = new FileReader();
+              reader.onload = function (e) {
+                  $('#img')
+                      .attr('src', e.target.result)
+                      .width(300)
+                      .height(300);
+              };
+              reader.readAsDataURL(input.files[0]);
+          }
+      }
+      </script>
+
+    <h1>Trabalho de LP</h1>
+    <div id="app">
+      <input type="file" @change="change" onchange="readURL(this)" />
+      <img id="img" src="#" alt="" />
+      
+      <h2>File Info</h2>
+      <p>
+        <strong>Name: </strong>
+        <span>{{ name }}</span>
+      </p>
+      <p>
+        <strong>Size: </strong>
+        <span>{{ size }}</span>
+      </p>
+      <p>
+        <strong>Type: </strong>
+        <span>{{ type }}</span>
+      </p>
+      <pre>{{ content }}</pre>
+      <div>
+        <mapview v-bind:content="content"></mapview>
+      <div>
+    </div>
+  <script type="text/javascript" src="main.js"></script></body>
+</html>
