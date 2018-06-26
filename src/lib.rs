@@ -3,7 +3,7 @@
 extern crate exif;
 extern crate wasm_bindgen;
 
-use exif::Value;
+use exif::{Reader, Tag, Value};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -15,43 +15,34 @@ pub fn read_metadata(vec: &[u8]) -> Vec<f64> {
 }
 
 fn metadata(vec: &[u8]) -> Option<(f64, f64)> {
-    let reader = exif::Reader::new(&mut std::io::BufReader::new(vec)).unwrap();
+    let reader = Reader::new(&mut std::io::BufReader::new(vec)).unwrap();
 
-    let degrees_lati;
-    let min_lati;
-    let sec_lati;
-
-    let degrees_long;
-    let min_long;
-    let sec_long;
-
-    match reader.get_field(exif::Tag::GPSLatitude, false)?.value {
-        Value::Rational(ref lati_cord) => {
-            degrees_lati = lati_cord[0].to_f64();
-            min_lati = lati_cord[1].to_f64();
-            sec_lati = lati_cord[2].to_f64();
+    let mut latitude = match reader.get_field(Tag::GPSLatitude, false)?.value {
+        Value::Rational(ref cord) => {
+            let degrees = cord[0].to_f64();
+            let min = cord[1].to_f64();
+            let sec = cord[2].to_f64();
+            degrees + (min / 60.0) + (sec / 3600.0)
         }
         _ => panic!(),
-    }
+    };
 
-    match reader.get_field(exif::Tag::GPSLongitude, false)?.value {
-        Value::Rational(ref long_cord) => {
-            degrees_long = long_cord[0].to_f64();
-            min_long = long_cord[1].to_f64();
-            sec_long = long_cord[2].to_f64();
+    let mut longitude = match reader.get_field(Tag::GPSLongitude, false)?.value {
+        Value::Rational(ref cord) => {
+            let degrees = cord[0].to_f64();
+            let min = cord[1].to_f64();
+            let sec = cord[2].to_f64();
+            degrees + (min / 60.0) + (sec / 3600.0)
         }
         _ => panic!(),
-    }
+    };
 
-    let mut latitude = degrees_lati + (min_lati / 60.0) + (sec_lati / 3600.0);
-    let mut longitude = degrees_long + (min_long / 60.0) + (sec_long / 3600.0);
-
-    match reader.get_field(exif::Tag::GPSLatitudeRef, false)?.value {
+    match reader.get_field(Tag::GPSLatitudeRef, false)?.value {
         Value::Ascii(ref chars) if chars[0][0] == b'S' => latitude *= -1.0,
         _ => panic!(),
     }
 
-    match reader.get_field(exif::Tag::GPSLongitudeRef, false)?.value {
+    match reader.get_field(Tag::GPSLongitudeRef, false)?.value {
         Value::Ascii(ref chars) if chars[0][0] == b'W' => longitude *= -1.0,
         _ => panic!(),
     }
