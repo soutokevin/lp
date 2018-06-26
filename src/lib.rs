@@ -47,8 +47,5 @@ fn metadata(vec: &[u8]) -> Option<(f64, f64)> {
         _ => panic!(),
     }
 
-    println!("latitude {:?}", latitude);
-    println!("Longitude {:?}", longitude);
-
     Some((latitude, longitude))
 }
