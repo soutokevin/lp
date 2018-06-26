@@ -26,19 +26,24 @@ fn get_cord(reader: &Reader, tag: Tag) -> Option<f64> {
     }
 }
 
+fn get_ref(reader: &Reader, tag: Tag) -> Option<u8> {
+    match reader.get_field(tag, false)?.value {
+        Value::Ascii(ref chars) => Some(chars[0][0]),
+        _ => None,
+    }
+}
+
 fn metadata(vec: &[u8]) -> Option<(f64, f64)> {
     let reader = Reader::new(&mut std::io::BufReader::new(vec)).unwrap();
     let mut latitude = get_cord(&reader, Tag::GPSLatitude)?;
     let mut longitude = get_cord(&reader, Tag::GPSLongitude)?;
 
-    match reader.get_field(Tag::GPSLatitudeRef, false)?.value {
-        Value::Ascii(ref chars) if chars[0][0] == b'S' => latitude *= -1.0,
-        _ => panic!(),
+    if get_ref(&reader, Tag::GPSLatitudeRef)? == b'S' {
+        latitude *= -1.0;
     }
 
-    match reader.get_field(Tag::GPSLongitudeRef, false)?.value {
-        Value::Ascii(ref chars) if chars[0][0] == b'W' => longitude *= -1.0,
-        _ => panic!(),
+    if get_ref(&reader, Tag::GPSLongitudeRef)? == b'W' {
+        longitude *= -1.0;
     }
 
     Some((latitude, longitude))
