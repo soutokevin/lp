@@ -7,39 +7,6 @@ use exif::Value;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-pub fn read_file(vec: &[u8]) -> String {
-    let mut text = String::new();
-
-    for (i, el) in vec.iter().enumerate() {
-        if i % 80 == 0 {
-            text.push('\n');
-        }
-
-        match el {
-            b'a'...b'z'
-            | b'A'...b'Z'
-            | b'1'...b'9'
-            | b'['
-            | b']'
-            | b'@'
-            | b'='
-            | b'"'
-            | b'-'
-            | b'{'
-            | b'}'
-            | b' ' => {
-                text.push(' ');
-                text.push(*el as char)
-            }
-            b'\n' => text.push_str("\\n"),
-            _ => text.push_str(" ."),
-        }
-    }
-
-    text
-}
-
-#[wasm_bindgen]
 pub fn read_metadata(vec: &[u8]) -> Vec<f64> {
     let reader = exif::Reader::new(&mut std::io::BufReader::new(vec)).unwrap();
 
